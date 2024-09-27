@@ -444,7 +444,11 @@ class BaseRequest(MutableMapping[str, Any], HeadersMixin):
 
     @reify
     def url(self) -> URL:
-        url = URL.build(scheme=self.scheme, host=self.host)
+        if ':' in self.host:
+            host, port = self.host.split(':')
+            url = URL.build(scheme=self.scheme, host=host, port=int(port))
+        else:
+            url = URL.build(scheme=self.scheme, host=self.host)
         return url.join(self._rel_url)
 
     @reify
